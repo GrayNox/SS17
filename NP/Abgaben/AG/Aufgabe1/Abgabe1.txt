@@ -1,0 +1,37 @@
+monitor ReentrantLock {
+    int id;
+    int count = 0;
+    bool locked = false;
+    
+    condition unlocked with locked == false;
+    
+    void mlock(int a){
+        if (id  == a && locked) {
+            count = count +1;
+        }
+        else {
+            waitForCondition(unlocked);
+            id = a;
+            locked = true;
+            count = count+1;
+        }
+    }
+    
+    void munlock(int a){
+        if(count == 0){
+            println("nothing locked");
+        }
+        else if(a == id){
+            if (count == 1){
+                locked = false;
+                signal(unlocked);
+            }
+            else{
+                count = count -1;
+            }
+        }
+        else {
+           println("you have nothing locked");
+        }
+    }
+}
